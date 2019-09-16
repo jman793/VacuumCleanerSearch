@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 # coding: utf-8
 
@@ -9,7 +10,7 @@
 #                                                     0
 #                                                  / / \ \ \
 #                                              1132  1232 13  14 15 16
-#                                          200 
+#                                          200
 #                                        4000
 
 
@@ -17,8 +18,8 @@
 
 
 # Frontier is a queue, and we use a 4 elements sublist in the Frontier to represent a node on the tree
-#             sublist[0] shows the level of the node & the action sequences 
-#                      the first digit in sublist[0] shows the level of the node, other digits after that shows the action sequences 
+#             sublist[0] shows the level of the node & the action sequences
+#                      the first digit in sublist[0] shows the level of the node, other digits after that shows the action sequences
 #                   like 3513 3 level3
 #                              5 the action at level1 up
 #                              1 the action at level2 no op
@@ -26,7 +27,7 @@
 #           sublist[1]   the total cost
 #           sublist[2]   the vauum cleaner location x asis
 #           sublist[3]   the vauum cleaner location y asis
-#sublist[0] shows the level of the node 1 means level1                       
+#sublist[0] shows the level of the node 1 means level1
 # Result has the same structure with Frontier, and it's the output of the program
 
 
@@ -34,8 +35,9 @@
 
 
 import math
+import time
 import sys
-sys.setrecursionlimit(100000)
+sys.setrecursionlimit(1000000000)
 
 
 # In[4]:
@@ -67,7 +69,7 @@ Clean_up_Cost = 4
 # In[7]:
 
 
-Action = ['Block','NoOp', 'Suck', 'Left', 'Right', 'Up', 'Down'] #There are 5 actions for agent & order by cost decs 
+Action = ['Block','NoOp', 'Suck', 'Left', 'Right', 'Up', 'Down'] #There are 5 actions for agent & order by cost decs
 # The list start from 1
 Action_Cost = [0,NoOp_Cost, Suck_Cost, Left_Cost, Right_Cost, Up_Cost, Down_Cost]
 
@@ -75,29 +77,29 @@ Action_Cost = [0,NoOp_Cost, Suck_Cost, Left_Cost, Right_Cost, Up_Cost, Down_Cost
 # In[8]:
 
 
-def Sort(List): 
+def Sort(List):
     # https://www.geeksforgeeks.org/python-sort-list-according-second-element-sublist/
-    # reverse = None (Sorts in Ascending order) 
-    # key is set to sort using second element of  
-    # sublist lambda has been used 
-    List.sort(key = lambda x: x[1], reverse=True) 
+    # reverse = None (Sorts in Ascending order)
+    # key is set to sort using second element of
+    # sublist lambda has been used
+    List.sort(key = lambda x: x[1], reverse=True)
     return List
 
 
 # In[9]:
 
 
-def firstDigit(n) : 
-    #https://www.geeksforgeeks.org/find-first-last-digits-number/  
+def firstDigit(n) :
+    #https://www.geeksforgeeks.org/find-first-last-digits-number/
     if n == 0:
         return n
     else:
-        # Find total number of digits - 1 
-        digits = (int)(math.log10(n)) 
-        # Find first digit 
-        n = (int)(n / pow(10, digits)) 
-        # Return first digit 
-        return n; 
+        # Find total number of digits - 1
+        digits = (int)(math.log10(n))
+        # Find first digit
+        n = (int)(n / pow(10, digits))
+        # Return first digit
+        return n;
 
 
 # In[10]:
@@ -107,7 +109,7 @@ def fromStart(inp, del1):
     if inp == 0:
         return 0
     else:
-        #https://www.geeksforgeeks.org/program-to-delete-nth-digit-of-a-number/  
+        #https://www.geeksforgeeks.org/program-to-delete-nth-digit-of-a-number/
         inp = str(inp)
         inp1 = inp[0:del1 - 1]
         inp2 = inp[del1:len(inp)]
@@ -118,11 +120,11 @@ def fromStart(inp, del1):
 
 
 def UCTS(ds,vcl,depth):
-    
+
     path_cost = 0
     Frontier = [[0,path_cost,vcl[0],vcl[1]]]
     Result = []
-    
+
     UCTS_Visit(ds,vcl,depth,Frontier,Result)
     return Result
 
@@ -133,21 +135,21 @@ def UCTS(ds,vcl,depth):
 def UCTS_Visit(ds,vcl,depth,Frontier,Result):
 
     Index = [] # this list will be updated after each extending
-    
+
     # Add level10 result to Result and Index
     for m in Frontier:
         if m[0] - pow(10,depth) >= 0:
             Result.append(m)
             Index.append(m)
-    
-    # Remove elements >= 100000000000 level10 which have been added to Index list 
+
+    # Remove elements >= 100000000000 level10 which have been added to Index list
     for q in Index:
         Frontier.remove(q)
         # Return a queue without level 10 elements
     if len(Frontier) == 0:
         return Result
     else:
-        # Choose the first element in the queue, and prepare for extending  
+        # Choose the first element in the queue, and prepare for extending
         previous_values = Frontier.pop(0)  # delete the first element
         path_cost_previous = previous_values[1] #parent's cost
         level_previous = firstDigit(previous_values[0])# parent's level
@@ -164,7 +166,7 @@ def UCTS_Visit(ds,vcl,depth,Frontier,Result):
             i =i + 1
             print("Action is "+str(i))
             clean_cost = 0
-            
+
             if i == 2:
                 vclytmp = vcly
                 vclxtmp = vclx
@@ -182,17 +184,17 @@ def UCTS_Visit(ds,vcl,depth,Frontier,Result):
                 vclytmp = vcly - 1
                 vclxtmp = vclx
             elif i == 6:
-                vclytmp = vcly + 1 
+                vclytmp = vcly + 1
                 vclxtmp = vclx
             else:
                 vclytmp = vcly
                 vclxtmp = vclx
-            
+
             if vclxtmp > 5 or vclxtmp < 1:
                 continue
             elif vclytmp > 5 or vclytmp < 1:
                 continue
-            
+
             print("The VCL is ["+ str(vclytmp) + "," +str(vclxtmp) + "]")
 
             node = level*(pow(10,level))+node_previous*10+i
@@ -201,38 +203,47 @@ def UCTS_Visit(ds,vcl,depth,Frontier,Result):
             Frontier.append([node, path_cost,vclytmp,vclxtmp])
         Sort(Frontier)
         print("The Frontier is " + str(Frontier))
-        print("The Result is " + str(Result))
+        #print("The Result is " + str(Result))
         UCTS_Visit(ds,vcl,depth,Frontier,Result)
 
+
+# ## Test Case #2
 
 # In[13]:
 
 
-Result = UCTS(ds1,vcl1,3)
+#Start CPU Time
+start = time.clock()
 
 
 # In[14]:
 
 
-cost = []
-for i in Result:
-    cost.append(i[1])
+Result = UCTS(ds2,vcl2,6)
 
 
 # In[15]:
 
 
-cost.sort(reverse=True)
+#End CPU Time
+end =  time.clock()
+CPU_Time = end - start
 
 
 # In[16]:
 
 
-cost
+cost = []
+for i in Result:
+    cost.append(i)
+
+cost = Sort(cost)
 
 
-# In[ ]:
+# In[17]:
 
 
-
-
+print("b.The best solution " + str(cost[0][0])
+      + " And the point is " + str(cost[0][1]))
+print("c.The number of nodes (6 depths) " + str(len(cost)))
+print("d.CPU time is " + str(CPU_Time))
